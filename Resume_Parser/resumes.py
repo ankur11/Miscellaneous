@@ -30,11 +30,6 @@ path = "../"
 #retrive all files
 onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
 
-
-### debug
-#print(os.environ.get('CLASSPATH'))
-#print(os.environ.get('STANFORD_MODELS'))
-
 ###
 text = ""
 alltext = ""
@@ -76,10 +71,9 @@ print('regex compiled for corpus.')
 ###
 #writting cvs
 with open('profiles.csv', 'w') as csvfile:
-    fieldnames = ['first_name', 'last_name','email','phone','experience']
+    fieldnames = ['hint','first_name', 'last_name','email','phone','experience']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
-
 	
     print('ready to write cvs...')
 
@@ -124,7 +118,7 @@ with open('profiles.csv', 'w') as csvfile:
         
         elif extension == "docx" or extension == "doc":
             
-            call(["textutil","-convert","txt" ,path + file])
+            call(["pandoc","-s",path + file,"-o", path + new_string +".txt"])
 
             #open a file and save content
         
@@ -142,6 +136,7 @@ with open('profiles.csv', 'w') as csvfile:
 
             print(':::::::::::::::processing file:::::::::::::::')
             
+	    hint = ""
             phone = ""
             name = ""
             lastname = ""
@@ -186,6 +181,8 @@ with open('profiles.csv', 'w') as csvfile:
                 if l != "":
                         newlist.append(l)
 
+	    hint = ''.join(str(elem) + ' '  for elem in newlist)
+
             while '' in newlist: newlist.remove('') 
 
             nregx = re.compile(r"\b([a-zA-Z]*)\b")
@@ -211,9 +208,9 @@ with open('profiles.csv', 'w') as csvfile:
             
             exp = '|'.join(exp)
      
-            writer.writerow({'first_name':str(name), 'last_name': str(lastname), 'email': str(email), 'phone':str(phone),'experience':  exp})
-            print(new_string)
-            print('writting row. ' + str(name) + ' ' + str(lastname) + ' ' + str(email) + ' ' + str(phone) + ' ' + exp)
+            writer.writerow({'hint': hint,'first_name':str(name), 'last_name': str(lastname), 'email': str(email), 'phone':str(phone),'experience':  exp})
+            #print(new_string)
+            #print('writting row. ' + str(name) + ' ' + str(lastname) + ' ' + str(email) + ' ' + str(phone) + ' ' + exp)
 
 
             
